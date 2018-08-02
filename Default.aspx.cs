@@ -7,6 +7,7 @@ using System.Web.UI.WebControls;
 using System.IO;
 using System.Drawing;
 using System.Drawing.Drawing2D;
+using System.Drawing.Imaging;
 
 /*=========================================
   
@@ -53,24 +54,11 @@ namespace ColorTransfer {
     }
     
     protected void Page_Load(object sender, EventArgs e) {
-      if (!Page.IsPostBack) {
-        string[] filePaths = Directory.GetFiles(Server.MapPath("~/Images/"));
-        List<ListItem> files = new List<ListItem>();
-        foreach (string filePath in filePaths) {
-          string fileName = Path.GetFileName(filePath);
-          files.Add(new ListItem(fileName, "~/Images/" + fileName + "?" + DateTime.Now.Second.ToString()));
-        }
-        GridView1.DataSource = files;
-        GridView1.DataBind();
-      }
+			debug.Text = "";
     }
 
     protected void run(object sender, EventArgs e) {
       if (sourceFU.HasFile && targetFU.HasFile) {
-        //Save it to disk so we can display it!
-        sourceFU.PostedFile.SaveAs(Server.MapPath("~/Images/") + "1-source.jpg");
-        targetFU.PostedFile.SaveAs(Server.MapPath("~/Images/") + "2-target.jpg");
-
         //source(RGB) -> sourceEdit(Lab)
         Bitmap source = new Bitmap(sourceFU.PostedFile.InputStream);
         Bitmap target = new Bitmap(targetFU.PostedFile.InputStream);
@@ -123,9 +111,15 @@ namespace ColorTransfer {
         }
 
         Bitmap result = colToBitmap(results);
-        result.Save(Server.MapPath("~/Images/") + "3-result.jpg");
+				
+				//Show the images
+        showImage(source);
+				showImage(target);
+				showImage(result);
       }
-      Response.Redirect(Request.Url.AbsoluteUri);
+			else {
+				debug.Text = "Please select an source and target file";
+			}
     }
 
     protected col[,] imgTrans(col[,] sourceEdit, col[,] targetEdit) {
@@ -165,20 +159,6 @@ namespace ColorTransfer {
       }
 
       return results;
-    }
-
-    protected void clear(object sender, EventArgs e) {
-      sourceFU.Attributes.Clear();
-      targetFU.Attributes.Clear();
-
-      GridView1.DataSource = null;
-      GridView1.DataBind();
-
-      //Clear the files from the temp
-      System.IO.DirectoryInfo di = new DirectoryInfo(Server.MapPath("~/Images/"));
-      foreach (FileInfo file in di.GetFiles()) {
-        file.Delete();
-      }
     }
 
     protected col[,] BitmapToCol(Bitmap img) {
@@ -407,5 +387,22 @@ namespace ColorTransfer {
       }
       return ret;
     }
+
+		//Addes the image to ImageUP
+		protected void showImage(Bitmap img) {
+			MemoryStream ms = new MemoryStream();
+			img.Save(ms, ImageFormat.Jpeg);
+			var base64Data = Convert.ToBase64String(ms.ToArray());
+
+			System.Web.UI.WebControls.Image newImg = new System.Web.UI.WebControls.Image();
+			newImg.ImageUrl = "data:image/jpg;base64," + base64Data;
+			newImg.Visible = true;
+			imageUP.ContentTemplateContainer.Controls.Add(newImg);
+		}
+
+		protected void clear(object sender, EventArgs e) {
+			Response.Redirect(Request.RawUrl); //Just refresh
+		}
+
   }
 }

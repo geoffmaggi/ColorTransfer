@@ -49,6 +49,24 @@ namespace ColorTransfer {
         protected global::System.Web.UI.WebControls.DropDownList spaceDDL;
         
         /// <summary>
+        /// ScriptManager1 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.ScriptManager ScriptManager1;
+        
+        /// <summary>
+        /// imageUP control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.UpdatePanel imageUP;
+        
+        /// <summary>
         /// runBtn control.
         /// </summary>
         /// <remarks>
@@ -67,12 +85,12 @@ namespace ColorTransfer {
         protected global::System.Web.UI.WebControls.Button clearBtn;
         
         /// <summary>
-        /// GridView1 control.
+        /// debug control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.GridView GridView1;
+        protected global::System.Web.UI.WebControls.Label debug;
     }
 }
